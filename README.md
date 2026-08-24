@@ -6,7 +6,9 @@ Internes Fallmanagement für Klärfälle zwischen Netzbetreiber, Messstellenbetr
 
 - Vorgänge mit MaLo/MeLo, Zählernummer, Sparte, Marktpartner, Priorität, Status und Wiedervorlage
 - dauerhafte SQLite-Datenbank und Anlagenablage in einem Docker-Volume
-- Outlook-Synchronisierung über Microsoft Graph sowie manueller EML-Import
+- Drag-and-drop-Ablage von Outlook-Nachrichten (`.msg` und `.eml`) einschließlich ihrer Anlagen
+- Screenshots, Bilder, PDF-, Text-, CSV- und Excel-Dateien direkt am Vorgang; Screenshots können auch mit `Strg+V`/`Cmd+V` eingefügt werden
+- optionaler Abruf eines zentralen Funktionspostfachs über Microsoft Graph
 - automatische Erkennung von EDIFACT-Anlagen
 - menschenlesbare Übersicht für UTILMD, MSCONS, APERAK, CONTRL, INVOIC, REMADV, ORDERS, ORDRSP, ORDCHG, PARTIN, PRICAT, REQOTE, QUOTES, COMDIS, IFTSTA, INSRPT und UTILTS
 - generische Segmentdarstellung für unbekannte oder zukünftige EDIFACT-Nachrichtentypen
@@ -33,9 +35,21 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-## Outlook / Microsoft 365
+## E-Mails und Screenshots ablegen
 
-Für den automatischen Abruf wird eine Microsoft-Entra-App benötigt:
+Der vorgesehene Standardweg benötigt keine Verbindung zum persönlichen Outlook-Postfach:
+
+1. Vorgang öffnen.
+2. Eine aus Outlook gezogene oder gespeicherte `.msg`-/`.eml`-Nachricht in **E-Mails, Screenshots & Dateien** ablegen.
+3. Nachrichtentext und enthaltene Anlagen stehen anschließend lesbar am Vorgang und in der E-Mail-Ablage zur Verfügung. Enthaltene EDIFACT-Dateien werden zusätzlich im EDIFACT-Leser aufbereitet.
+
+Screenshots und andere Nachweise können in denselben Bereich gezogen werden. Ein Screenshot aus der Zwischenablage lässt sich bei geöffnetem Vorgang mit `Strg+V` beziehungsweise `Cmd+V` einfügen. Bilder und PDFs öffnen sich im Browser; weitere Dateitypen werden kontrolliert heruntergeladen.
+
+Hinweis: Abhängig von Outlook-Version und Browser lässt sich eine Nachricht nicht immer unmittelbar aus dem Outlook-Fenster in eine Webseite ziehen. In diesem Fall die Nachricht kurz als `.msg` oder `.eml` auf dem Desktop speichern/ablegen und diese Datei in NetzKlärung ziehen.
+
+## Optionaler Funktionspostfach-Abruf
+
+Nur wenn zusätzlich ein zentrales Klärfall-Funktionspostfach automatisch eingelesen werden soll, wird eine Microsoft-Entra-App benötigt:
 
 1. App-Registrierung in Microsoft Entra ID erstellen.
 2. Microsoft Graph **Application permission** `Mail.Read` hinzufügen und Administratorzustimmung erteilen.
@@ -45,7 +59,7 @@ Für den automatischen Abruf wird eine Microsoft-Entra-App benötigt:
 
 Aus Datenschutz- und Least-Privilege-Gründen sollte der Anwendungszugriff in Exchange auf das benötigte Funktionspostfach begrenzt werden. Die Synchronisierung verwendet Microsoft Graph Delta-Abfragen und speichert den Delta-Link, sodass nach der ersten Synchronisierung nur Änderungen abgerufen werden. `OUTLOOK_SYNC_MINUTES=0` deaktiviert den Hintergrundabruf; der Abruf kann weiterhin über die Oberfläche gestartet werden.
 
-Zusätzlich können aus Outlook gespeicherte `.eml`-Dateien direkt importiert werden. E-Mail-Texte werden vor der Anzeige bereinigt. Anlagen werden nur über eine kontrollierte Download-Route bereitgestellt.
+Ohne diese Variablen bleibt die Drag-and-drop-Ablage vollständig nutzbar. E-Mail-Texte werden vor der Anzeige bereinigt. Anlagen werden nur über kontrollierte Anzeige- beziehungsweise Download-Routen bereitgestellt.
 
 ## Daten und Sicherung
 
@@ -53,6 +67,7 @@ Standardpfad im Container: `/data`
 
 - `/data/netzklaerung.sqlite` – Vorgänge, Verlauf, E-Mail-Metadaten und EDIFACT-Auswertungen
 - `/data/attachments/` – E-Mail-Anlagen
+- `/data/cases/` – Screenshots und sonstige Vorgangsdateien
 
 Für eine Sicherung das Docker-Volume im gestoppten oder konsistent gesicherten Zustand kopieren. Secrets gehören ausschließlich in Portainer-Umgebungsvariablen und nicht in das Repository.
 
