@@ -37,6 +37,10 @@ Die aktuell gültigen GPKE-Regelungen gelten seit 6. Juni 2025 und setzen den be
 
 Für einen NB folgt daraus: Ein manueller Klärfall darf nicht nur aus Freitext und einem Status bestehen. Er braucht eine sichtbare nächste Aktion, Frist, Prozess- und Nachrichtenreferenzen, Prüfidentifikator, eindeutige Zuständigkeit und einen kompakten aktuellen Erkenntnisstand. Genau diese Informationen müssen bei Vertretung oder nach längerer Liegezeit ohne erneute Recherche verständlich sein. E-Mails, EDIFACT-Nachrichten und Nachweise sollten deshalb Bestandteil desselben Vorgangs sein und nicht in getrennten Ablagen gesucht werden müssen.
 
+NetzKlärung setzt diese Konsequenz nun durch Eingangskorb, fallartspezifische Prüflisten, Fristquelle, fachliches Bezugsdatum, Abschlussprüfung und EDIFACT-Kettenansicht um. Automatisch ermittelte Abweichungen werden nicht als verbindlicher Prozessfehler dargestellt, sondern als prüfpflichtiger Hinweis. Damit bleibt die notwendige Trennung zwischen operativer Arbeitshilfe und formaler AHB-Konformitätsprüfung erhalten.
+
+Für historische Fälle ist ein eigener Modus erforderlich: Ein heute gültiges AHB darf nicht ungeprüft auf einen alten Bezugszeitpunkt angewendet werden. Im historischen oder flexiblen Modus sind Abweichungen daher zulässig, müssen aber begründet und über das Journal nachvollziehbar bleiben.
+
 ## Vor einem breiten Produktiveinsatz
 
 - optional Unternehmens-SSO als Ausbau der bereits integrierten persönlichen Konten und Rollen
@@ -44,7 +48,7 @@ Für einen NB folgt daraus: Ein manueller Klärfall darf nicht nur aus Freitext 
 - Verschlüsselung und Backup des Daten-Volumes
 - Konnektoren zu EDM, SAP IS-U/S/4 Utilities oder dem vorhandenen MaKo-System
 - versionierte AHB-/MIG-Regelpakete für fachliche Vollprüfung
-- Dubletten-, Storno- und Kettenlogik über Nachrichtenreferenzen
+- weitergehende Storno- und Antwortlogik über prozessspezifische Nachrichtenreferenzen; technische Dubletten- und grundlegende Kettenlogik ist bereits vorhanden
 - optionaler AS4-Eingang; Outlook ist für Klärkommunikation sinnvoll, aber nicht als Ersatz für den vorgeschriebenen MaKo-Übertragungsweg
 - Massendaten- und Lasttests mit realistischen MSCONS-Zählerstandsgängen
 

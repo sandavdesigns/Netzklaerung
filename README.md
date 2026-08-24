@@ -5,6 +5,12 @@ Internes Fallmanagement für Klärfälle zwischen Netzbetreiber, Messstellenbetr
 ## Funktionen
 
 - Vorgänge als zentraler Arbeitsplatz mit Übergabezusammenfassung, nächster Aktion, offenen Punkten, Journal, Dokumenten und vollständiger Bearbeitung
+- zentraler Eingangskorb für noch nicht zugeordnete E-Mails und EDIFACT-Dateien mit Vorschlägen anhand Vorgangsnummer, Lokation, Zählernummer und Marktpartner
+- fallartspezifische fachliche Checklisten; zusätzliche Prüfschritte können je Vorgang ergänzt werden
+- Standard-, flexibler und historischer Bearbeitungsmodus mit fachlichem Bezugsdatum und dokumentierter Ausnahmebegründung
+- kontrollierter Abschluss mit Ursache, Lösung, Pflichtprüfungen, Abschlusszeitpunkt und prüfender Person
+- EDIFACT-Nachrichtenkette am Vorgang mit Vergleich erkannter Messwerte, Mengen, Einheiten und Identifikatoren
+- Fristart und Fristquelle zusätzlich zur frei änderbaren Wiedervorlage
 - persönliche Anmeldung, Benutzerverwaltung sowie Benutzerwechsel durch Abmelden/Neuanmelden
 - dauerhafte SQLite-Datenbank und Anlagenablage in einem Docker-Volume
 - Drag-and-drop-Ablage von Outlook-Nachrichten (`.msg` und `.eml`) einschließlich ihrer Anlagen
@@ -13,11 +19,14 @@ Internes Fallmanagement für Klärfälle zwischen Netzbetreiber, Messstellenbetr
 - bearbeitbare Mailvorlagen pro Vorgang zum Kopieren oder Öffnen im lokalen E-Mail-Programm
 - optionaler Abruf eines zentralen Funktionspostfachs über Microsoft Graph
 - automatische Erkennung von EDIFACT-Anlagen
+- Dublettenerkennung für wiederholt importierte E-Mails und EDIFACT-Nachrichten
+- Marktpartnerakte mit offenen Vorgängen und häufigen Fallarten
+- druck- und archivierbarer HTML-Vorgangsexport mit Stammdaten, Prüfliste, Journal, E-Mails und EDIFACT-Kette
 - menschenlesbare Übersicht für UTILMD, MSCONS, APERAK, CONTRL, INVOIC, REMADV, ORDERS, ORDRSP, ORDCHG, PARTIN, PRICAT, REQOTE, QUOTES, COMDIS, IFTSTA, INSRPT und UTILTS
 - generische Segmentdarstellung für unbekannte oder zukünftige EDIFACT-Nachrichtentypen
 - Syntaxprüfungen für UNB/UNZ, UNH/UNT und Segmentzähler
 
-Die fachliche Ansicht ersetzt keine zertifizierte AHB-Prüfung. Sie übersetzt sämtliche korrekt strukturierten EDIFACT-Nachrichten in Segmente und Fachobjekte; formatversionsgenaue Mussfeld- und Prüfidentifikatorregeln sollten später als versionierte Regelpakete ergänzt werden.
+Die fachliche Ansicht ersetzt keine zertifizierte AHB-Prüfung. Sie übersetzt korrekt strukturierte EDIFACT-Nachrichten in Segmente und Fachobjekte und liefert bewusst als **Prüfhinweise** bezeichnete Vergleiche. Formatversionsgenaue Mussfeld-, Prüfidentifikator- und Entscheidungsbaumregeln bleiben ein separates, versioniert zu pflegendes Regelwerksprojekt.
 
 ## Vorgang als Arbeitsplatz
 
@@ -33,6 +42,14 @@ Für die fachliche NB-Bearbeitung stehen unter anderem folgende Angaben zur Verf
 - Journal für Notizen, Telefonate, E-Mail-Rückmeldungen und Entscheidungen
 
 Änderungen an zentralen Steuerungsfeldern und erledigte Aufgaben werden automatisch im Journal protokolliert.
+
+### Standards, Sonderfälle und historische Vorgänge
+
+- **Standard** verhindert einen Abschluss, solange Ursache, Ergebnis oder verpflichtende Prüfschritte fehlen.
+- **Flexibel** erlaubt fachlich begründete Abweichungen. Bei unvollständigem Abschluss muss eine Ausnahmebegründung dokumentiert sein.
+- **Historisch** ist für Altfälle gedacht, deren damalige Formatversion, Unterlagen oder Prozesslage nicht mehr vollständig rekonstruierbar sind. Auch hier bleibt die Begründung im Journal nachvollziehbar.
+
+Das **fachliche Bezugsdatum** bezeichnet den Zeitpunkt, nach dessen damaligem Regelstand der Fall beurteilt werden soll. `Wiedervorlage`, `Fristart` und `Fristquelle` werden getrennt geführt, damit interne Organisationstermine nicht versehentlich als regulatorische Marktfrist erscheinen.
 
 ## Anmeldung und Benutzer
 
@@ -102,6 +119,8 @@ Standardpfad im Container: `/data`
 - `/data/cases/` – Screenshots und sonstige Vorgangsdateien
 
 Für eine Sicherung das Docker-Volume im gestoppten oder konsistent gesicherten Zustand kopieren. Secrets gehören ausschließlich in Portainer-Umgebungsvariablen und nicht in das Repository.
+
+Der Vorgangsexport ist eine lesbare Momentaufnahme und kann im Browser als PDF gedruckt werden. Er ist kein Ersatz für ein unternehmensweit abgestimmtes revisionssicheres Archiv. Vor Produktivbetrieb müssen Aufbewahrungszeiten, Löschregeln, Wiederherstellungstest und Verantwortlichkeiten festgelegt werden.
 
 ## Entwicklung
 
