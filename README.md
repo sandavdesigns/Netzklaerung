@@ -8,6 +8,8 @@ Internes Fallmanagement für Klärfälle zwischen Netzbetreiber, Messstellenbetr
 - dauerhafte SQLite-Datenbank und Anlagenablage in einem Docker-Volume
 - Drag-and-drop-Ablage von Outlook-Nachrichten (`.msg` und `.eml`) einschließlich ihrer Anlagen
 - Screenshots, Bilder, PDF-, Text-, CSV- und Excel-Dateien direkt am Vorgang; Screenshots können auch mit `Strg+V`/`Cmd+V` eingefügt werden
+- Navision-CSV-Import für Marktpartner mit Dublettenabgleich und Kontaktzuordnung
+- bearbeitbare Mailvorlagen pro Vorgang zum Kopieren oder Öffnen im lokalen E-Mail-Programm
 - optionaler Abruf eines zentralen Funktionspostfachs über Microsoft Graph
 - automatische Erkennung von EDIFACT-Anlagen
 - menschenlesbare Übersicht für UTILMD, MSCONS, APERAK, CONTRL, INVOIC, REMADV, ORDERS, ORDRSP, ORDCHG, PARTIN, PRICAT, REQOTE, QUOTES, COMDIS, IFTSTA, INSRPT und UTILTS
@@ -60,6 +62,12 @@ Nur wenn zusätzlich ein zentrales Klärfall-Funktionspostfach automatisch einge
 Aus Datenschutz- und Least-Privilege-Gründen sollte der Anwendungszugriff in Exchange auf das benötigte Funktionspostfach begrenzt werden. Die Synchronisierung verwendet Microsoft Graph Delta-Abfragen und speichert den Delta-Link, sodass nach der ersten Synchronisierung nur Änderungen abgerufen werden. `OUTLOOK_SYNC_MINUTES=0` deaktiviert den Hintergrundabruf; der Abruf kann weiterhin über die Oberfläche gestartet werden.
 
 Ohne diese Variablen bleibt die Drag-and-drop-Ablage vollständig nutzbar. E-Mail-Texte werden vor der Anzeige bereinigt. Anlagen werden nur über kontrollierte Anzeige- beziehungsweise Download-Routen bereitgestellt.
+
+## Navision-Marktpartner und Mailvorlagen
+
+Unter **Marktpartner** kann ein Navision-Export als CSV importiert werden. Unterstützt werden Semikolon, Komma und Tabulator sowie UTF-8 und Windows-1252. Übliche Spalten wie `Debitorennr.`, `Firmenname`, `Marktrolle`, `BDEW-Nr.`, `GLN`, `E-Mail`, `Telefon`, `Straße`, `PLZ` und `Ort` werden automatisch erkannt. Mindestens `Name` oder `Firmenname` muss enthalten sein. Wiederholte Importe aktualisieren Partner anhand Navision-Nummer, BDEW-Code oder Name.
+
+Bei geöffnetem Vorgang steht über **Mailvorlage** eine vorausgefüllte Klärungsanfrage zur Verfügung. Enthalten sind Vorgangsnummer, Sparte, MaLo/MeLo, Zählernummer und Sachverhalt. Weitere Vorlagen decken Messwertanforderung, Stammdatenklärung und Erinnerung ab. Empfängeradressen werden aus dem importierten Marktpartnerstamm übernommen. Der Text kann kopiert oder über einen `mailto`-Link im lokalen E-Mail-Programm geöffnet werden; NetzKlärung versendet dabei noch keine Nachricht selbst.
 
 ## Daten und Sicherung
 
