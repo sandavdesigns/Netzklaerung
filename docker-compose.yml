@@ -1,0 +1,27 @@
+services:
+  netzklaerung:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: netzklaerung:latest
+    container_name: netzklaerung
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      DATA_DIR: /data
+      OUTLOOK_SYNC_MINUTES: ${OUTLOOK_SYNC_MINUTES:-5}
+      MS_TENANT_ID: ${MS_TENANT_ID:-}
+      MS_CLIENT_ID: ${MS_CLIENT_ID:-}
+      MS_CLIENT_SECRET: ${MS_CLIENT_SECRET:-}
+      OUTLOOK_MAILBOX: ${OUTLOOK_MAILBOX:-}
+      OUTLOOK_FOLDER_ID: ${OUTLOOK_FOLDER_ID:-inbox}
+      APP_USERNAME: ${APP_USERNAME:-}
+      APP_PASSWORD: ${APP_PASSWORD:-}
+    volumes:
+      - netzklaerung_data:/data
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  netzklaerung_data:
