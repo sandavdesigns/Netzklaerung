@@ -16,8 +16,8 @@ services:
       MS_CLIENT_SECRET: ${MS_CLIENT_SECRET:-}
       OUTLOOK_MAILBOX: ${OUTLOOK_MAILBOX:-}
       OUTLOOK_FOLDER_ID: ${OUTLOOK_FOLDER_ID:-inbox}
-      APP_USERNAME: ${APP_USERNAME:-}
-      APP_PASSWORD: ${APP_PASSWORD:-}
+      AUTH_SECRET: ${AUTH_SECRET:-bitte-in-portainer-aendern}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
     volumes:
       - netzklaerung_data:/data
     security_opt:

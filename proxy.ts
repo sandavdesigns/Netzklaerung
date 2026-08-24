@@ -1,13 +1,4 @@
 import { NextRequest,NextResponse } from 'next/server';
-
-export function proxy(request:NextRequest){
- if(request.nextUrl.pathname==='/api/health')return NextResponse.next();
- const username=process.env.APP_USERNAME,password=process.env.APP_PASSWORD;
- if(!username||!password)return NextResponse.next();
- const header=request.headers.get('authorization');
- if(header?.startsWith('Basic ')){
-  try{const decoded=atob(header.slice(6)),separator=decoded.indexOf(':'),user=decoded.slice(0,separator),pass=decoded.slice(separator+1);if(user===username&&pass===password)return NextResponse.next()}catch{}
- }
- return new NextResponse('Anmeldung erforderlich.',{status:401,headers:{'WWW-Authenticate':'Basic realm="NetzKlaerung", charset="UTF-8"','Cache-Control':'no-store'}});
-}
-export const config={matcher:['/((?!_next/static|_next/image|favicon.svg|og.png).*)']};
+import { readSession } from '@/lib/auth';
+export function proxy(request:NextRequest){const path=request.nextUrl.pathname;if(path==='/api/health'||path.startsWith('/api/auth/'))return NextResponse.next();if(!path.startsWith('/api/'))return NextResponse.next();return readSession(request.cookies.get('nk_session')?.value)?NextResponse.next():NextResponse.json({error:'Anmeldung erforderlich.'},{status:401})}
+export const config={matcher:['/api/:path*']};

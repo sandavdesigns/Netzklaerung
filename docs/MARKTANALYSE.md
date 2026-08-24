@@ -31,9 +31,15 @@ Das Portal verwendet diesen Mechanismus, speichert den Delta-Link, archiviert E-
 3. Vier bis sechs Wochen Parallelbetrieb ohne automatische Rückschreibungen in führende Systeme.
 4. Messung von Durchlaufzeit, Wiedervorlageüberschreitungen, Anzahl manueller Systemwechsel, wiederkehrenden Ursachen und Partnerantwortzeiten.
 
+## Konsequenzen für den Vorgangsarbeitsplatz
+
+Die aktuell gültigen GPKE-Regelungen gelten seit 6. Juni 2025 und setzen den beschleunigten werktäglichen Lieferantenwechsel sowie modularere Prozesse um. Die Bundesnetzagentur verbindet damit ausdrücklich kürzere Fristen, robustere Abläufe und weniger manuelle Clearingfälle. Quellen: [BNetzA – aktuell gültige GPKE](https://bundesnetzagentur.de/DE/Beschlusskammern/BK06/BK6_83_Zug_Mess/831_gpke/gpke_node.html), [BK6-22-024](https://www.bundesnetzagentur.de/DE/Beschlusskammern/1_GZ/BK6-GZ/2022/BK6-22-024/BK6-22-024_Beschluss_BDB.html).
+
+Für einen NB folgt daraus: Ein manueller Klärfall darf nicht nur aus Freitext und einem Status bestehen. Er braucht eine sichtbare nächste Aktion, Frist, Prozess- und Nachrichtenreferenzen, Prüfidentifikator, eindeutige Zuständigkeit und einen kompakten aktuellen Erkenntnisstand. Genau diese Informationen müssen bei Vertretung oder nach längerer Liegezeit ohne erneute Recherche verständlich sein. E-Mails, EDIFACT-Nachrichten und Nachweise sollten deshalb Bestandteil desselben Vorgangs sein und nicht in getrennten Ablagen gesucht werden müssen.
+
 ## Vor einem breiten Produktiveinsatz
 
-- Unternehmens-SSO und rollenbasierte Berechtigungen statt einfachem Basisschutz
+- optional Unternehmens-SSO als Ausbau der bereits integrierten persönlichen Konten und Rollen
 - revisionssichere Auditierung, Aufbewahrungs- und Löschkonzept
 - Verschlüsselung und Backup des Daten-Volumes
 - Konnektoren zu EDM, SAP IS-U/S/4 Utilities oder dem vorhandenen MaKo-System

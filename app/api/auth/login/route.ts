@@ -1,0 +1,5 @@
+import { NextRequest,NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { createSession } from '@/lib/auth';
+import { verifyPassword } from '@/lib/password';
+export async function POST(request:NextRequest){const body=await request.json()as{username?:string;password?:string},row=db.prepare(`SELECT id,username,display_name displayName,role,password_hash passwordHash,active FROM users WHERE lower(username)=lower(?)`).get(body.username?.trim()||'')as{id:string;username:string;displayName:string;role:'admin'|'user';passwordHash:string;active:number}|undefined;if(!row||!row.active||!verifyPassword(body.password||'',row.passwordHash))return NextResponse.json({error:'Benutzername oder Passwort ist nicht korrekt.'},{status:401});const response=NextResponse.json({user:{id:row.id,username:row.username,displayName:row.displayName,role:row.role}});response.cookies.set('nk_session',createSession({id:row.id,username:row.username,displayName:row.displayName,role:row.role}),{httpOnly:true,sameSite:'lax',secure:process.env.COOKIE_SECURE==='true',path:'/',maxAge:8*60*60});return response}

@@ -4,7 +4,8 @@ Internes Fallmanagement für Klärfälle zwischen Netzbetreiber, Messstellenbetr
 
 ## Funktionen
 
-- Vorgänge mit MaLo/MeLo, Zählernummer, Sparte, Marktpartner, Priorität, Status und Wiedervorlage
+- Vorgänge als zentraler Arbeitsplatz mit Übergabezusammenfassung, nächster Aktion, offenen Punkten, Journal, Dokumenten und vollständiger Bearbeitung
+- persönliche Anmeldung, Benutzerverwaltung sowie Benutzerwechsel durch Abmelden/Neuanmelden
 - dauerhafte SQLite-Datenbank und Anlagenablage in einem Docker-Volume
 - Drag-and-drop-Ablage von Outlook-Nachrichten (`.msg` und `.eml`) einschließlich ihrer Anlagen
 - Screenshots, Bilder, PDF-, Text-, CSV- und Excel-Dateien direkt am Vorgang; Screenshots können auch mit `Strg+V`/`Cmd+V` eingefügt werden
@@ -18,17 +19,39 @@ Internes Fallmanagement für Klärfälle zwischen Netzbetreiber, Messstellenbetr
 
 Die fachliche Ansicht ersetzt keine zertifizierte AHB-Prüfung. Sie übersetzt sämtliche korrekt strukturierten EDIFACT-Nachrichten in Segmente und Fachobjekte; formatversionsgenaue Mussfeld- und Prüfidentifikatorregeln sollten später als versionierte Regelpakete ergänzt werden.
 
+## Vorgang als Arbeitsplatz
+
+Beim Öffnen eines Vorgangs erscheint ein eigener Arbeitsbereich. Der Block **Was ist hier gerade los?** dient als kurze Übergabe für den nächsten Arbeitstag, Urlaub oder eine Vertretung. Daneben werden nächste Aktion, Wiedervorlage, Status, Priorität, Bearbeiter und Eskalationsstufe geführt.
+
+Für die fachliche NB-Bearbeitung stehen unter anderem folgende Angaben zur Verfügung:
+
+- Prozessbezug wie WiM-Werte, GPKE-Zuordnung, Gerätewechsel, Stammdaten, Bilanzierung oder Netznutzungsabrechnung
+- MaLo/MeLo, Zählernummer, Marktpartner, Sparte, Prüfidentifikator und Prozess-/Nachrichtenreferenz
+- Ausgangssachverhalt, ermittelte Ursache und erwartete Lösung
+- offene Punkte mit Zuständigkeit und Fälligkeit
+- Ansprechpartner, letzter Kontakt, E-Mails, Screenshots und Dokumente
+- Journal für Notizen, Telefonate, E-Mail-Rückmeldungen und Entscheidungen
+
+Änderungen an zentralen Steuerungsfeldern und erledigte Aufgaben werden automatisch im Journal protokolliert.
+
+## Anmeldung und Benutzer
+
+Beim ersten Start fordert NetzKlärung zur Anlage des ersten Administratorkontos auf. Administratoren können danach unter ihrem Benutzermenü weitere Konten als Sachbearbeitung oder Administration anlegen und deaktivieren. Jeder Mitarbeiter meldet sich persönlich an; **Abmelden / Benutzer wechseln** beendet die aktuelle Sitzung. Sitzungen laufen nach acht Stunden ab.
+
+`AUTH_SECRET` muss in Portainer als langer, zufälliger und dauerhaft gleichbleibender Wert gesetzt werden. Wird der Wert geändert, werden bestehende Sitzungen ungültig. Bei HTTPS sollte `COOKIE_SECURE=true` gesetzt werden.
+
 ## Portainer-Installation
 
 1. In Portainer unter **Stacks** einen neuen Stack anlegen.
 2. Als Build-Quelle dieses Git-Repository auswählen oder den Inhalt von `docker-compose.yml` verwenden.
 3. Unter **Environment variables** mindestens `PORT` festlegen, zum Beispiel `8085`.
-4. Entweder einen authentifizierenden HTTPS-Reverse-Proxy vorschalten oder `APP_USERNAME` und `APP_PASSWORD` setzen.
+4. Einen langen zufälligen Wert als `AUTH_SECRET` setzen. Bei ausschließlichem HTTPS-Betrieb zusätzlich `COOKIE_SECURE=true` verwenden.
 5. Stack bereitstellen und `http://SERVER:8085` öffnen.
+6. Beim ersten Aufruf wird einmalig das erste Administratorkonto angelegt. Danach erfolgt die Anmeldung mit persönlichen Konten.
 
 Der interne Container-Port ist 3000. `PORT` bestimmt ausschließlich den frei wählbaren Port des Docker-Hosts. Das Volume `netzklaerung_data` enthält Datenbank und Anlagen und muss bei Aktualisierungen erhalten bleiben.
 
-Für produktive personenbezogene Mess- und Kommunikationsdaten werden TLS, Benutzer-/Rollenverwaltung oder SSO, ein Backupkonzept und ein abgestimmtes Löschkonzept benötigt. Der optionale HTTP-Basisschutz ist für einen kleinen internen Pilotbetrieb gedacht und ersetzt kein Unternehmens-SSO.
+Für produktive personenbezogene Mess- und Kommunikationsdaten werden TLS, ein Backupkonzept und ein abgestimmtes Löschkonzept benötigt. Die integrierte Benutzerverwaltung ist für den internen Betrieb gedacht; bei breiterem Einsatz sollte sie später durch Unternehmens-SSO ergänzt werden.
 
 Alternativ lokal:
 

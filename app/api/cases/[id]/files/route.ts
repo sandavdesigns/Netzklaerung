@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { NextRequest,NextResponse } from 'next/server';
 import { caseFileDir,db,safeFilename } from '@/lib/db';
 import { importEmailBuffer } from '@/lib/import-email';
+import { requestUser } from '@/lib/auth';
 
 export const runtime='nodejs';
 const allowed=new Set(['application/pdf','text/plain','text/csv','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']);
@@ -15,7 +16,7 @@ export async function GET(_request:NextRequest,{params}:{params:Promise<{id:stri
 }
 export async function POST(request:NextRequest,{params}:{params:Promise<{id:string}>}){
  try{
-  const{id}=await params,exists=db.prepare('SELECT 1 FROM cases WHERE id=?').get(id);
+  const{id}=await params,exists=db.prepare('SELECT 1 FROM cases WHERE id=?').get(id),author=requestUser(request)?.displayName||'Unbekannt';
   if(!exists)return NextResponse.json({error:'Vorgang nicht gefunden.'},{status:404});
   const form=await request.formData(),file=form.get('file');
   if(!(file instanceof File))return NextResponse.json({error:'Keine Datei übergeben.'},{status:400});
@@ -23,13 +24,13 @@ export async function POST(request:NextRequest,{params}:{params:Promise<{id:stri
   const buffer=Buffer.from(await file.arrayBuffer()),now=new Date().toISOString();
   if(/\.(msg|eml)$/i.test(file.name)){
    const result=await importEmailBuffer(buffer,file.name,id);
-   db.prepare(`INSERT INTO activities(case_id,kind,text,author,created_at) VALUES(?,?,?,?,?)`).run(id,'email',`E-Mail abgelegt: ${file.name}`,'Anna Keller',now);
+   db.prepare(`INSERT INTO activities(case_id,kind,text,author,created_at) VALUES(?,?,?,?,?)`).run(id,'email',`E-Mail abgelegt: ${file.name}`,author,now);
    return NextResponse.json({kind:'email',...result},{status:201});
   }
   if(!file.type.startsWith('image/')&&!allowed.has(file.type))return NextResponse.json({error:'Erlaubt sind Bilder, PDF-, Text-, CSV- und Excel-Dateien sowie .msg/.eml.'},{status:415});
   const fileId=randomUUID(),filename=safeFilename(file.name),storagePath=path.join(caseFileDir(id),`${fileId}-${filename}`),kind=file.type.startsWith('image/')?'screenshot':'file';
   fs.writeFileSync(storagePath,buffer);
-  db.transaction(()=>{db.prepare(`INSERT INTO case_files(id,case_id,filename,content_type,size,storage_path,kind,created_at) VALUES(?,?,?,?,?,?,?,?)`).run(fileId,id,filename,file.type||'application/octet-stream',file.size,storagePath,kind,now);db.prepare(`INSERT INTO activities(case_id,kind,text,author,created_at) VALUES(?,?,?,?,?)`).run(id,'file',`${kind==='screenshot'?'Screenshot':'Datei'} abgelegt: ${filename}`,'Anna Keller',now)})();
+  db.transaction(()=>{db.prepare(`INSERT INTO case_files(id,case_id,filename,content_type,size,storage_path,kind,created_at) VALUES(?,?,?,?,?,?,?,?)`).run(fileId,id,filename,file.type||'application/octet-stream',file.size,storagePath,kind,now);db.prepare(`INSERT INTO activities(case_id,kind,text,author,created_at) VALUES(?,?,?,?,?)`).run(id,'file',`${kind==='screenshot'?'Screenshot':'Datei'} abgelegt: ${filename}`,author,now)})();
   return NextResponse.json({id:fileId,kind},{status:201});
  }catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Ablage fehlgeschlagen.'},{status:400})}
 }
