@@ -44,10 +44,11 @@ Beim ersten Start fordert NetzKlärung zur Anlage des ersten Administratorkontos
 
 1. In Portainer unter **Stacks** einen neuen Stack anlegen.
 2. Als Build-Quelle dieses Git-Repository auswählen oder den Inhalt von `docker-compose.yml` verwenden.
-3. Unter **Environment variables** mindestens `PORT` festlegen, zum Beispiel `8085`.
-4. Einen langen zufälligen Wert als `AUTH_SECRET` setzen. Bei ausschließlichem HTTPS-Betrieb zusätzlich `COOKIE_SECURE=true` verwenden.
-5. Stack bereitstellen und `http://SERVER:8085` öffnen.
-6. Beim ersten Aufruf wird einmalig das erste Administratorkonto angelegt. Danach erfolgt die Anmeldung mit persönlichen Konten.
+3. Bei einem Git-Stack **Re-pull image** beziehungsweise **Pull latest image** deaktiviert lassen. Das Image wird aus dem `Dockerfile` gebaut und nicht aus Docker Hub geladen.
+4. Unter **Environment variables** mindestens `PORT` festlegen, zum Beispiel `8085`.
+5. Einen langen zufälligen Wert als `AUTH_SECRET` setzen. Bei ausschließlichem HTTPS-Betrieb zusätzlich `COOKIE_SECURE=true` verwenden.
+6. Stack bereitstellen und `http://SERVER:8085` öffnen.
+7. Beim ersten Aufruf wird einmalig das erste Administratorkonto angelegt. Danach erfolgt die Anmeldung mit persönlichen Konten.
 
 Der interne Container-Port ist 3000. `PORT` bestimmt ausschließlich den frei wählbaren Port des Docker-Hosts. Das Volume `netzklaerung_data` enthält Datenbank und Anlagen und muss bei Aktualisierungen erhalten bleiben.
 

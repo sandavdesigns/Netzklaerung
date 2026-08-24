@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: netzklaerung:latest
     container_name: netzklaerung
     restart: unless-stopped
     ports:
