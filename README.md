@@ -80,6 +80,8 @@ docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 
 Jeder Push auf `main` baut das Container-Image über GitHub Actions für `linux/amd64` und `linux/arm64` neu. Dadurch funktionieren Portainer-Installationen unabhängig davon, ob der jeweilige Docker-Endpunkt lokale Compose-Builds unterstützt.
 
+Die laufende Version steht unten links im Portal und zusätzlich im Health-Endpunkt `/api/health`. Veröffentlichte Images erhalten neben `latest` einen festen Versionstag, zum Beispiel `ghcr.io/sandavdesigns/netzklaerung:v0.1.1`. Für planbare Produktiv-Updates kann in Portainer `NETZKLAERUNG_IMAGE` auf einen solchen festen Tag gesetzt werden; mit `latest` wird immer der jüngste Stand geladen.
+
 Beim ersten veröffentlichten Image kann GitHub das Container-Paket zunächst privat anlegen. Dann unter **GitHub → sandavdesigns → Packages → netzklaerung → Package settings → Change visibility → Public** einmalig auf öffentlich stellen. Öffentliche GHCR-Images können von Portainer ohne Registry-Zugang gezogen werden. Alternativ kann in Portainer eine GHCR-Registry mit einem Token und `read:packages` hinterlegt werden.
 
 ## E-Mails und Screenshots ablegen

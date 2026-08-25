@@ -5,6 +5,7 @@ import MailTemplates from '@/components/MailTemplates';
 import AuthGate,{UserPanel,useAuth} from '@/components/AuthGate';
 import CaseWorkspace from '@/components/CaseWorkspace';
 import Inbox from '@/components/Inbox';
+import { APP_VERSION } from '@/lib/version';
 /* eslint-disable @next/next/no-img-element */
 
 type CaseItem={id:string;title:string;category:string;partner:string;market:string;location:string;meterNumber:string;owner:string;dueDate:string;status:string;priority:string;description:string;createdAt:string;updatedAt:string};
@@ -51,7 +52,7 @@ function Workspace(){
  const caseRows=(items:CaseItem[],emptyText='Keine passenden Vorgänge.')=>loading?<tr><td colSpan={6}>Vorgänge werden geladen …</td></tr>:items.length?items.map(item=><tr key={item.id} onClick={()=>setSelected(item)} className="clickable"><td><a>{item.title}</a><small>{item.id} · {short(item.location)}</small></td><td>{item.partner}</td><td><span className={`market ${item.market.toLowerCase()}`}>{item.market==='Strom'?'ϟ':'◉'} {item.market}</span></td><td><span className="mini-avatar">{initials(item.owner)}</span>{item.owner}</td><td className={item.dueDate<=today?'due':''}>{dueLabel(item.dueDate)}</td><td><span className={`status ${item.status.replaceAll(' ','-').toLowerCase()}`}>{item.status}</span></td></tr>):<tr><td className="table-empty" colSpan={6}>{emptyText}</td></tr>;
  const caseTable=(items:CaseItem[],emptyText?:string)=><div className="table-wrap"><table><thead><tr><th>Vorgang</th><th>Marktpartner</th><th>Sparte</th><th>Bearbeitung</th><th>Wiedervorlage</th><th>Status</th></tr></thead><tbody>{caseRows(items,emptyText)}</tbody></table></div>;
  return <main className="shell">
-  <aside className="sidebar"><div className="brand"><span className="brand-mark">N</span><span><b>NetzKlärung</b><small>Marktpartner-Portal</small></span></div><nav>{nav.map(item=><button key={item} className={active===item?'nav-active':''} onClick={()=>setActive(item)}><span>{icons[item]}</span>{item}{item==='Eingangskorb'&&inboxCount>0&&<em>{inboxCount}</em>}{item==='Wiedervorlagen'&&<em>{due.length}</em>}{item==='E-Mails'&&emails.length>0&&<em>{emails.length}</em>}</button>)}</nav><div className="sidebar-foot"><UserPanel/></div></aside>
+  <aside className="sidebar"><div className="brand"><span className="brand-mark">N</span><span><b>NetzKlärung</b><small>Marktpartner-Portal</small></span></div><nav>{nav.map(item=><button key={item} className={active===item?'nav-active':''} onClick={()=>setActive(item)}><span>{icons[item]}</span>{item}{item==='Eingangskorb'&&inboxCount>0&&<em>{inboxCount}</em>}{item==='Wiedervorlagen'&&<em>{due.length}</em>}{item==='E-Mails'&&emails.length>0&&<em>{emails.length}</em>}</button>)}</nav><div className="sidebar-foot"><UserPanel/><small className="app-version">NetzKlärung v{APP_VERSION}</small></div></aside>
   <section className="workspace"><header className="topbar"><div className="search"><span>⌕</span><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="MaLo, MeLo, Zähler, Vorgang oder Partner suchen …"/></div>{notice&&<span className="top-notice">{notice}</span>}<button className="icon-button">♢</button><button className="primary" onClick={()=>setCreateOpen(true)}>＋ Neuer Vorgang</button></header>
    <div className="content">
     {active==='Marktpartner'&&<MarketPartners/>}

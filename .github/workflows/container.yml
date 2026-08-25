@@ -3,7 +3,6 @@ name: Container-Image veröffentlichen
 on:
   push:
     branches: [main]
-    tags: ['v*']
   workflow_dispatch:
 
 concurrency:
@@ -37,6 +36,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Anwendungsversion lesen
+        id: version
+        run: echo "value=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+
       - name: Image-Metadaten erzeugen
         id: meta
         uses: docker/metadata-action@v5
@@ -44,8 +47,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=v${{ steps.version.outputs.value }},enable={{is_default_branch}}
             type=sha,prefix=sha-
-            type=ref,event=tag
           labels: |
             org.opencontainers.image.title=NetzKlärung
             org.opencontainers.image.description=Interne NB-Klärfall-Workbench für Marktkommunikation
