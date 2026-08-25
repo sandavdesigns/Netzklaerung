@@ -1,8 +1,7 @@
 services:
   netzklaerung:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${NETZKLAERUNG_IMAGE:-ghcr.io/sandavdesigns/netzklaerung:latest}
+    pull_policy: always
     container_name: netzklaerung
     restart: unless-stopped
     ports:

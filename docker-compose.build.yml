@@ -1,0 +1,7 @@
+services:
+  netzklaerung:
+    image: netzklaerung:local
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: Dockerfile

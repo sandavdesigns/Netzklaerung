@@ -13,6 +13,8 @@ RUN npm run build
 
 FROM node:22-bookworm-slim AS runner
 WORKDIR /app
+LABEL org.opencontainers.image.source="https://github.com/sandavdesigns/Netzklaerung"
+LABEL org.opencontainers.image.description="Interne NB-Klaerfall-Workbench fuer Marktkommunikation"
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0 DATA_DIR=/data
 RUN groupadd --system --gid 1001 netzklaerung && useradd --system --uid 1001 --gid netzklaerung netzklaerung && mkdir -p /data && chown netzklaerung:netzklaerung /data
 COPY --from=builder --chown=netzklaerung:netzklaerung /app/.next/standalone ./

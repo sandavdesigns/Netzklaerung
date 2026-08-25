@@ -60,8 +60,8 @@ Beim ersten Start fordert NetzKlärung zur Anlage des ersten Administratorkontos
 ## Portainer-Installation
 
 1. In Portainer unter **Stacks** einen neuen Stack anlegen.
-2. Als Build-Quelle dieses Git-Repository auswählen oder den Inhalt von `docker-compose.yml` verwenden.
-3. Bei einem Git-Stack **Re-pull image** beziehungsweise **Pull latest image** deaktiviert lassen. Das Image wird aus dem `Dockerfile` gebaut und nicht aus Docker Hub geladen.
+2. Als Git-Quelle dieses Repository und als Compose-Pfad `docker-compose.yml` auswählen oder den Inhalt der Datei in den Web-Editor kopieren.
+3. **Re-pull image** beziehungsweise **Pull latest image** aktivieren. Portainer lädt das fertig gebaute Multi-Architektur-Image `ghcr.io/sandavdesigns/netzklaerung:latest`; auf dem Docker-Server wird kein BuildKit benötigt.
 4. Unter **Environment variables** mindestens `PORT` festlegen, zum Beispiel `8085`.
 5. Einen langen zufälligen Wert als `AUTH_SECRET` setzen. Bei ausschließlichem HTTPS-Betrieb zusätzlich `COOKIE_SECURE=true` verwenden.
 6. Stack bereitstellen und `http://SERVER:8085` öffnen.
@@ -75,8 +75,12 @@ Alternativ lokal:
 
 ```bash
 cp .env.example .env
-docker compose up -d --build
+docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
 ```
+
+Jeder Push auf `main` baut das Container-Image über GitHub Actions für `linux/amd64` und `linux/arm64` neu. Dadurch funktionieren Portainer-Installationen unabhängig davon, ob der jeweilige Docker-Endpunkt lokale Compose-Builds unterstützt.
+
+Beim ersten veröffentlichten Image kann GitHub das Container-Paket zunächst privat anlegen. Dann unter **GitHub → sandavdesigns → Packages → netzklaerung → Package settings → Change visibility → Public** einmalig auf öffentlich stellen. Öffentliche GHCR-Images können von Portainer ohne Registry-Zugang gezogen werden. Alternativ kann in Portainer eine GHCR-Registry mit einem Token und `read:packages` hinterlegt werden.
 
 ## E-Mails und Screenshots ablegen
 
