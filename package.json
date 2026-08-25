@@ -1,6 +1,6 @@
 {
   "name": "netzklaerung",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -16,6 +16,7 @@
   "dependencies": {
     "@kenjiuno/msgreader": "^1.28.0",
     "better-sqlite3": "^12.4.1",
+    "iconv-lite": "^0.7.3",
     "mailparser": "^3.7.4",
     "next": "^16.3.2",
     "react": "19.2.6",
