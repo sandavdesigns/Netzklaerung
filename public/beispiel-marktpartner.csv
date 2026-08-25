@@ -1,0 +1,4 @@
+Navision-Nr.;Firmenname;Marktrolle;BDEW-Nr.;GLN;E-Mail;Telefon;Straße;PLZ;Ort
+MP-10001;Beispiel Messstellenbetrieb GmbH;MSB;9900001000001;4399000100001;clearing@beispiel-msb.invalid;+49 30 000000-10;Musterstraße 12;10115;Berlin
+MP-10002;Beispiel Energievertrieb AG;LF;9900002000002;4399000200002;marktkommunikation@beispiel-lieferant.invalid;+49 40 000000-20;Testweg 8;20095;Hamburg
+MP-10003;Beispiel Netzservice GmbH;NB;9900003000003;4399000300003;mako@beispiel-netz.invalid;+49 69 000000-30;Demoplatz 3;60311;Frankfurt am Main
