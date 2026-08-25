@@ -114,6 +114,8 @@ Ohne diese Variablen bleibt die Drag-and-drop-Ablage vollständig nutzbar. E-Mai
 
 Unter **Marktpartner** kann ein Navision-Export als CSV importiert werden. Unterstützt werden Semikolon, Komma und Tabulator sowie UTF-8, Windows-1252 und UTF-16 mit oder ohne BOM. Häufige doppelte Fehlkodierungen wie `MÃ¼ller` werden pro Tabellenzelle erkannt und repariert; sicher korrigierbare Altwerte im Marktpartnerstamm werden bei einem erneuten Import ebenfalls bereinigt. Übliche Spalten wie `Debitorennr.`, `Firmenname`, `Marktrolle`, `BDEW-Nr.`, `GLN`, `E-Mail`, `Telefon`, `Straße`, `PLZ` und `Ort` werden automatisch erkannt. Mindestens `Name` oder `Firmenname` muss enthalten sein. Wiederholte Importe aktualisieren Partner anhand Navision-Nummer, BDEW-Code, GLN oder Name.
 
+Administratoren können den gesamten importierten Marktpartnerstamm über **Marktpartner leeren** entfernen. Die Aktion verlangt einen ausgeschriebenen Bestätigungstext. Vorgänge, die darin dokumentierten Partnernamen, E-Mails, EDIFACT-Dokumente und Dateien bleiben erhalten; lediglich technische Verknüpfungen zum gelöschten Stamm werden zurückgesetzt.
+
 Bei geöffnetem Vorgang steht über **Mailvorlage** eine vorausgefüllte Klärungsanfrage zur Verfügung. Enthalten sind Vorgangsnummer, Sparte, MaLo/MeLo, Zählernummer und Sachverhalt. Weitere Vorlagen decken Messwertanforderung, Stammdatenklärung und Erinnerung ab. Empfängeradressen werden aus dem importierten Marktpartnerstamm übernommen. Der Text kann kopiert oder über einen `mailto`-Link im lokalen E-Mail-Programm geöffnet werden; NetzKlärung versendet dabei noch keine Nachricht selbst.
 
 ## Daten und Sicherung
