@@ -10,9 +10,9 @@ export async function GET(request:Request,{params}:{params:Promise<{id:string}>}
  const{id}=await params,row=db.prepare(`SELECT subject,sender_name senderName,sender_address senderAddress,recipients,received_at receivedAt,body_html bodyHtml,body_text bodyText,case_id caseId FROM emails WHERE id=?`).get(id)as{subject:string;senderName:string;senderAddress:string;recipients:string;receivedAt:string;bodyHtml:string;bodyText:string;caseId:string}|undefined;
  if(!row)return NextResponse.json({error:'E-Mail nicht gefunden.'},{status:404});
  const email={...row,subject:cleanMailString(row.subject),senderName:cleanMailString(row.senderName),senderAddress:cleanMailString(row.senderAddress),bodyHtml:cleanMailString(row.bodyHtml),bodyText:cleanMailString(row.bodyText)},recipients=normalizeRecipients(row.recipients),recipientRows=([['to','An'],['cc','Kopie'],['bcc','Blindkopie']]as const).map(([type,label])=>{const values=recipients.filter(item=>item.type===type);return values.length?`<dt>${label}</dt><dd>${values.map(item=>esc(recipientLabel(item))).join('<br>')}</dd>`:''}).join('');
- const attachments=db.prepare(`SELECT id,filename,size,content_id contentId,is_inline isInline FROM attachments WHERE email_id=? ORDER BY filename`).all(id)as{id:string;filename:string;size:number;contentId:string;isInline:number}[];
+ const attachments=db.prepare(`SELECT id,filename,size,content_type contentType,content_id contentId,is_inline isInline FROM attachments WHERE email_id=? ORDER BY filename`).all(id)as{id:string;filename:string;size:number;contentType:string;contentId:string;isInline:number}[];
  const inlineByCid=new Map(attachments.filter(item=>item.contentId).map(item=>[normalizeCid(item.contentId),item.id]));
- const visible=attachments.filter(item=>!item.isInline);
+ const visible=attachments.filter(item=>!item.isInline||!String(item.contentType||'').toLowerCase().startsWith('image/'));
  let body=email.bodyHtml||`<pre>${esc(email.bodyText||'')}</pre>`;
  body=body.replace(/cid:(?:&lt;|<)?([^"' >]+?)(?:&gt;|>)?(?=["' >])/gi,(match,cid:string)=>{
   const attachmentId=inlineByCid.get(normalizeCid(cid));
