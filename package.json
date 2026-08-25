@@ -1,6 +1,6 @@
 {
   "name": "netzklaerung",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "test:csv": "node --experimental-strip-types --test tests/csv.test.ts",
+    "test:email": "node --experimental-strip-types --test tests/email.test.ts",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "check": "tsc --noEmit"
   },

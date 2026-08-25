@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { normalizeRecipients,recipientLabel } from '@/lib/email-addresses';
+import { cleanMailString } from '@/lib/email-encoding';
 
 const esc=(value:string)=>value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]!));
 const normalizeCid=(value:string)=>value.replace(/^<|>$/g,'').trim().toLowerCase();
 
 export async function GET(request:Request,{params}:{params:Promise<{id:string}>}){
- const{id}=await params,email=db.prepare(`SELECT subject,sender_name senderName,sender_address senderAddress,received_at receivedAt,body_html bodyHtml,body_text bodyText,case_id caseId FROM emails WHERE id=?`).get(id)as{subject:string;senderName:string;senderAddress:string;receivedAt:string;bodyHtml:string;bodyText:string;caseId:string}|undefined;
- if(!email)return NextResponse.json({error:'E-Mail nicht gefunden.'},{status:404});
+ const{id}=await params,row=db.prepare(`SELECT subject,sender_name senderName,sender_address senderAddress,recipients,received_at receivedAt,body_html bodyHtml,body_text bodyText,case_id caseId FROM emails WHERE id=?`).get(id)as{subject:string;senderName:string;senderAddress:string;recipients:string;receivedAt:string;bodyHtml:string;bodyText:string;caseId:string}|undefined;
+ if(!row)return NextResponse.json({error:'E-Mail nicht gefunden.'},{status:404});
+ const email={...row,subject:cleanMailString(row.subject),senderName:cleanMailString(row.senderName),senderAddress:cleanMailString(row.senderAddress),bodyHtml:cleanMailString(row.bodyHtml),bodyText:cleanMailString(row.bodyText)},recipients=normalizeRecipients(row.recipients),recipientRows=([['to','An'],['cc','Kopie'],['bcc','Blindkopie']]as const).map(([type,label])=>{const values=recipients.filter(item=>item.type===type);return values.length?`<dt>${label}</dt><dd>${values.map(item=>esc(recipientLabel(item))).join('<br>')}</dd>`:''}).join('');
  const attachments=db.prepare(`SELECT id,filename,size,content_id contentId,is_inline isInline FROM attachments WHERE email_id=? ORDER BY filename`).all(id)as{id:string;filename:string;size:number;contentId:string;isInline:number}[];
  const inlineByCid=new Map(attachments.filter(item=>item.contentId).map(item=>[normalizeCid(item.contentId),item.id]));
  const visible=attachments.filter(item=>!item.isInline);
@@ -17,7 +20,7 @@ export async function GET(request:Request,{params}:{params:Promise<{id:string}>}
  });
  const url=new URL(request.url),embed=url.searchParams.get('embed')==='1',allowExternal=url.searchParams.get('external')==='1',hasExternalImages=/\bsrc\s*=\s*["']https?:/i.test(body);
  const imageNotice=hasExternalImages?`<aside class="image-notice">${allowExternal?'Externe Bilder sind für diese Ansicht geladen.':'Externe Bilder sind zum Schutz vor Tracking gesperrt.'} <a target="_self" href="?${embed?'embed=1&':''}external=${allowExternal?'0':'1'}">${allowExternal?'Wieder sperren':'Einmalig anzeigen'}</a></aside>`:'';
- const meta=`<header class="mail-meta"><h1>${esc(email.subject)}</h1><dl><dt>Von</dt><dd><strong>${esc(email.senderName||email.senderAddress)}</strong>${email.senderName&&email.senderAddress?` &lt;${esc(email.senderAddress)}&gt;`:''}</dd><dt>Empfangen</dt><dd>${esc(new Intl.DateTimeFormat('de-DE',{dateStyle:'medium',timeStyle:'short'}).format(new Date(email.receivedAt)))}</dd><dt>Vorgang</dt><dd>${esc(email.caseId||'noch nicht zugeordnet')}</dd></dl></header>`;
+ const meta=`<header class="mail-meta"><h1>${esc(email.subject)}</h1><dl><dt>Von</dt><dd><strong>${esc(email.senderName||email.senderAddress)}</strong>${email.senderName&&email.senderAddress?` &lt;${esc(email.senderAddress)}&gt;`:''}</dd>${recipientRows}<dt>Empfangen</dt><dd>${esc(new Intl.DateTimeFormat('de-DE',{dateStyle:'medium',timeStyle:'short'}).format(new Date(email.receivedAt)))}</dd><dt>Vorgang</dt><dd>${esc(email.caseId||'noch nicht zugeordnet')}</dd></dl></header>`;
  const files=`<section class="attachments"><h2>Anlagen <span>${visible.length}</span></h2>${visible.length?visible.map(file=>`<a href="/api/attachments/${encodeURIComponent(file.id)}"><span class="file-icon">▤</span><span><strong>${esc(file.filename)}</strong><small>${Math.max(1,Math.ceil(file.size/1024))} KB</small></span><b>Herunterladen</b></a>`).join(''):'<p>Keine separaten Anlagen</p>'}</section>`;
  const html=`<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(email.subject)}</title><base target="_blank"><style>
  :root{color-scheme:light}*{box-sizing:border-box}html{background:${embed?'#fff':'#eef3f0'}}body{margin:0;background:#fff;color:#202a25;font:15px/1.55 Arial,Helvetica,sans-serif;overflow-wrap:anywhere}${embed?'':'.shell{max-width:1060px;margin:28px auto;border:1px solid #dce5df;border-radius:12px;box-shadow:0 12px 40px rgba(24,55,43,.08);overflow:hidden}'}
